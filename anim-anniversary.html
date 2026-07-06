@@ -1,0 +1,487 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, viewport-fit=cover">
+<title>Happy Anniversary, Love</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Great+Vibes&family=Kaushan+Script&family=Caveat:wght@500;600;700&family=Cormorant+Garamond:ital,wght@0,400;0,500;0,600;1,400;1,500&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --bg-1:#7a0f0f;
+    --bg-2:#4c0505;
+    --envelope:#9c1f1f;
+    --envelope-dark:#7a1414;
+    --flap:#b23434;
+    --gold:#d9c08a;
+    --gold-dark:#a9834a;
+    --cream:#fdf5e8;
+  }
+ 
+  *{box-sizing:border-box; -webkit-tap-highlight-color:transparent;}
+  html,body{height:100%;}
+  body{
+    margin:0;
+    font-family:'Cormorant Garamond', serif;
+    background:#2b0202;
+    overflow:hidden;
+  }
+ 
+  .app{
+    position:relative;
+    width:100%;
+    height:100vh;
+    height:100svh;
+    max-width:520px;
+    margin:0 auto;
+    background:radial-gradient(ellipse at 50% 35%, var(--bg-1) 0%, var(--bg-2) 68%, #300303 100%);
+    overflow:hidden;
+  }
+ 
+  /* ---------- ambient floating hearts ---------- */
+  .ambient-hearts{position:absolute; inset:0; pointer-events:none; z-index:1; overflow:hidden;}
+  .amb-heart{
+    position:absolute; bottom:-10%; color:#ff9d9d;
+    animation-name:driftUp; animation-timing-function:linear; animation-iteration-count:infinite;
+    will-change:transform, opacity;
+  }
+  @keyframes driftUp{
+    0%{ transform:translateY(0) translateX(0); opacity:0;}
+    12%{opacity:1;}
+    88%{opacity:1;}
+    100%{ transform:translateY(-115vh) translateX(18px); opacity:0;}
+  }
+ 
+  .vignette{
+    position:absolute; inset:0; z-index:2; pointer-events:none;
+    background:radial-gradient(ellipse at 50% 45%, rgba(0,0,0,0) 45%, rgba(0,0,0,0.45) 100%);
+  }
+ 
+  /* ---------- screens ---------- */
+  .screen{
+    position:absolute; inset:0; z-index:3;
+    display:flex; flex-direction:column; align-items:center; justify-content:center;
+    padding:40px 28px;
+    text-align:center;
+    opacity:0; pointer-events:none;
+    transition:opacity .55s ease;
+    overflow-y:auto;
+    -webkit-overflow-scrolling:touch;
+  }
+  .screen.active{ opacity:1; pointer-events:auto; }
+  /* konten screen ini lebih tinggi dari layar di banyak HP, jadi dibikin
+     nempel ke atas (bukan center) supaya foto/isi paling atas nggak
+     "tenggelam" ke luar layar pas dibuka, dan sisanya tinggal discroll ke bawah */
+  #screen-messages,
+  #screen-memories{
+    justify-content:flex-start;
+    padding-top:64px;
+    padding-bottom:56px;
+  }
+ 
+  .script-title{
+    font-family:'Great Vibes', cursive;
+    color:var(--cream);
+    font-size:clamp(2.1rem, 9.5vw, 3.2rem);
+    line-height:1.2;
+    text-shadow:0 3px 14px rgba(0,0,0,0.4);
+    margin:0 0 34px;
+  }
+  .script-title.small{ font-size:clamp(1.7rem, 7.5vw, 2.4rem); margin-bottom:40px; }
+ 
+  .marker-title{
+    font-family:'Kaushan Script', cursive;
+    color:var(--cream);
+    font-size:clamp(2rem, 9vw, 2.7rem);
+    text-shadow:0 3px 14px rgba(0,0,0,0.4);
+    margin:0 0 52px;
+  }
+ 
+  .hint-text{
+    font-style:italic; font-weight:400;
+    color:rgba(255,255,255,0.85);
+    font-size:1.05rem;
+    margin-top:30px;
+    letter-spacing:.2px;
+    transition:opacity .3s ease;
+  }
+ 
+  /* ---------- envelope ---------- */
+  .envelope-wrap{
+    background:none; border:none; padding:0; cursor:pointer;
+    width:min(250px, 62vw);
+    filter:drop-shadow(0 16px 26px rgba(0,0,0,0.45));
+    animation:pulse 2.6s ease-in-out infinite;
+  }
+  .envelope-wrap.opened{ animation:envelopeFadeOut .45s ease .55s forwards; }
+  @keyframes pulse{ 0%,100%{transform:scale(1);} 50%{transform:scale(1.035);} }
+  @keyframes envelopeFadeOut{ to{ opacity:0; transform:scale(1.06);} }
+ 
+  .envelope-wrap svg{ display:block; width:100%; height:auto; }
+  #sealGroup{ transform-box:fill-box; transform-origin:center; }
+  #flapPath{ transform-box:fill-box; transform-origin:center; }
+  .envelope-wrap.opened #sealGroup{ animation:sealBreak .45s ease forwards; }
+  .envelope-wrap.opened #flapPath{ animation:flapFade .5s ease forwards; }
+  @keyframes sealBreak{ to{ transform:scale(.35) rotate(18deg); opacity:0; } }
+  @keyframes flapFade{ to{ opacity:.25; transform:translateY(-6px);} }
+ 
+  /* ---------- menu ---------- */
+  .menu-options{ display:flex; gap:clamp(32px,12vw,64px); justify-content:center; align-items:flex-start; }
+  .menu-item{
+    display:flex; flex-direction:column; align-items:center; gap:14px;
+    background:none; border:none; padding:6px; cursor:pointer;
+    -webkit-tap-highlight-color:transparent;
+  }
+  .menu-item .menu-icon{
+    font-size:3rem; line-height:1;
+    filter:drop-shadow(0 10px 16px rgba(0,0,0,0.4));
+    transition:transform .18s ease;
+  }
+  .menu-item:active .menu-icon{ transform:scale(.9); }
+  .menu-item .menu-label{
+    font-family:'Cormorant Garamond', serif;
+    color:var(--cream);
+    font-size:1.1rem; letter-spacing:.3px; font-weight:500;
+  }
+ 
+  /* ---------- back button ---------- */
+  .back-btn{
+    position:absolute; top:22px; left:18px; z-index:5;
+    width:38px; height:38px; border-radius:50%;
+    background:rgba(255,255,255,0.08);
+    border:1px solid rgba(217,192,138,0.45);
+    color:var(--cream); font-size:1.3rem;
+    display:flex; align-items:center; justify-content:center;
+    cursor:pointer;
+  }
+  .back-btn:active{ background:rgba(255,255,255,0.16); }
+ 
+  /* ---------- messages screen ---------- */
+  /* FIX: dulu .polaroid-stack tingginya cuma 240px, padahal 2 foto yang
+     dirotasi + digeser (top:30%) bisa "keluar" dari tinggi itu sampai
+     150-200px lebih ke bawah dan numpuk sama teks pesan di bawahnya.
+     Sekarang tingginya ditambah + dikasih jarak (margin-bottom) yang cukup,
+     dan foto ke-2 posisinya dinaikkan dikit biar ga terlalu ke bawah. */
+  .polaroid-stack{
+    position:relative;
+    display:flex;
+    align-items:flex-start;
+    justify-content:center;
+    gap:10px;
+    width:min(320px, 88vw);
+    margin:0 auto 60px;
+  }
+  .polaroid{
+    position:relative;
+    width:48%;
+    background:var(--cream);
+    padding:6px 6px 20px;
+    border-radius:2px;
+    box-shadow:0 14px 22px rgba(0,0,0,0.4);
+  }
+  .polaroid-1{ transform:rotate(-6deg); z-index:1; }
+  .polaroid-2{ transform:rotate(6deg); z-index:2; margin-top:16px; }
+  .photo{
+    width:100%; aspect-ratio:1/1.05;
+    background:linear-gradient(135deg,#f3e6d8,#dfc0a3);
+    display:flex; align-items:center; justify-content:center;
+    font-size:2.1rem; color:#b98a63;
+    overflow:hidden;
+  }
+  .photo img{ width:100%; height:100%; object-fit:cover; display:block; }
+ 
+  .balloon{ position:absolute; animation:floatY 4s ease-in-out infinite; will-change:transform; }
+  .balloon svg{ display:block; width:100%; height:auto; }
+  .balloon-left-1{ left:-16%; bottom:-8%; width:19%; animation-duration:4.1s; }
+  .balloon-left-2{ left:0%; bottom:20%; width:14%; animation-duration:3.5s; animation-delay:.3s; }
+  .balloon-right-1{ right:-18%; top:-12%; width:20%; animation-duration:3.8s; animation-delay:.15s; }
+  .balloon-right-2{ right:-2%; top:20%; width:15%; animation-duration:4.4s; animation-delay:.5s; }
+  @keyframes floatY{ 0%,100%{ transform:translateY(0);} 50%{ transform:translateY(-9px);} }
+ 
+  .message-card{
+    position:relative;
+    width:min(280px, 78vw);
+    background:#fdf8ef;
+    border-radius:10px;
+    padding:24px 20px 20px;
+    margin-top:8px;
+    box-shadow:0 16px 30px rgba(0,0,0,0.4);
+  }
+  .card-corner{
+    position:absolute; top:-12px; left:-12px; width:78px; height:52px;
+    background-color:#f2e3cf;
+    background-image:
+      linear-gradient(45deg, #8a1c1c 25%, transparent 25%),
+      linear-gradient(-45deg, #8a1c1c 25%, transparent 25%),
+      linear-gradient(45deg, transparent 75%, #8a1c1c 75%),
+      linear-gradient(-45deg, transparent 75%, #8a1c1c 75%);
+    background-size:10px 10px;
+    background-position:0 0, 0 5px, 5px -5px, -5px 0px;
+    clip-path:polygon(0 0, 100% 0, 0 100%);
+    border-radius:8px 0 0 0;
+  }
+  .card-stars{
+    position:absolute; top:-14px; right:2px;
+    color:#7a1414; letter-spacing:-3px;
+    transform:rotate(-10deg);
+    font-size:1.2rem;
+  }
+  .card-stars span:nth-child(2){ font-size:0.85rem; position:relative; top:6px; left:-2px; }
+  .card-stars span:nth-child(3){ font-size:0.65rem; position:relative; top:10px; left:-4px; }
+  .card-flowers{
+    position:absolute; bottom:-14px; left:-16px;
+    font-size:2.4rem;
+    filter:drop-shadow(0 6px 10px rgba(0,0,0,0.4));
+    transform:translateZ(0);
+  }
+  .vinyl-btn{
+    position:absolute; bottom:-16px; right:-12px;
+    width:56px; height:56px; border-radius:50%;
+    background:radial-gradient(circle at 50% 50%, #7a1414 0 15%, #150303 16% 100%);
+    border:3px solid #2a0505;
+    display:flex; align-items:center; justify-content:center;
+    cursor:pointer;
+    box-shadow:0 10px 18px rgba(0,0,0,0.5);
+    will-change:transform;
+    transform:translateZ(0);
+  }
+  .vinyl-btn span{
+    font-family:'Caveat', cursive; font-weight:600;
+    color:#f5e6d0; font-size:0.85rem; transform:rotate(-16deg);
+    pointer-events:none;
+  }
+  .vinyl-btn.spinning{ animation:spinVinyl 2.5s linear infinite; }
+  @keyframes spinVinyl{ to{ transform:rotate(360deg); } }
+ 
+  .message-text{
+    font-family:'Caveat', cursive;
+    font-weight:600;
+    color:#7a1414;
+    font-size:1.05rem;
+    line-height:1.45;
+    text-align:center;
+  }
+  .message-text + .message-text{ margin-top:12px; }
+ 
+  /* ---------- memories (video frame) ---------- */
+  .video-frame{
+    position:relative;
+    width:min(230px, 66vw);
+    aspect-ratio:9/16;
+    background:#fdf8ef;
+    padding:10px;
+    border-radius:12px;
+    border:5px solid var(--gold-dark);
+    box-shadow:0 16px 30px rgba(0,0,0,0.45);
+  }
+  .video-frame video{
+    display:block; width:100%; height:100%;
+    object-fit:cover;
+    border-radius:6px;
+    background:#000;
+  }
+ 
+  a:focus-visible, button:focus-visible{ outline:2px solid var(--gold); outline-offset:3px; }
+ 
+  @media (prefers-reduced-motion: reduce){
+    *{ animation-duration:.01ms !important; animation-iteration-count:1 !important; transition-duration:.01ms !important; }
+  }
+</style>
+</head>
+<body>
+ 
+<div class="app">
+  <div class="ambient-hearts" id="ambientHearts"></div>
+  <div class="vignette"></div>
+ 
+  <!-- SCREEN 1 : LANDING / ENVELOPE -->
+  <section class="screen active" id="screen-landing">
+    <h1 class="script-title">Happy Anniversary,<br>Love&nbsp;!</h1>
+ 
+    <button class="envelope-wrap" id="envelopeBtn" aria-label="Buka amplop">
+      <svg viewBox="0 0 260 180" xmlns="http://www.w3.org/2000/svg">
+        <defs>
+          <linearGradient id="envBody" x1="0" y1="0" x2="0" y2="1">
+            <stop offset="0%" stop-color="#a12222"/>
+            <stop offset="100%" stop-color="#7a1414"/>
+          </linearGradient>
+          <linearGradient id="envFlap" x1="0" y1="0" x2="0" y2="1">
+            <stop offset="0%" stop-color="#bb3a3a"/>
+            <stop offset="100%" stop-color="#8f1c1c"/>
+          </linearGradient>
+          <radialGradient id="sealGrad" cx="35%" cy="30%" r="75%">
+            <stop offset="0%" stop-color="#f5e8c8"/>
+            <stop offset="55%" stop-color="#d9bd7e"/>
+            <stop offset="100%" stop-color="#b3915a"/>
+          </radialGradient>
+        </defs>
+ 
+        <rect x="0" y="10" width="260" height="160" rx="10" fill="url(#envBody)"/>
+        <path id="flapPath" d="M0,10 L260,10 L130,112 Z" fill="url(#envFlap)"/>
+ 
+        <g id="sealGroup">
+          <circle cx="130" cy="108" r="27" fill="url(#sealGrad)"/>
+          <circle cx="130" cy="108" r="27" fill="none" stroke="#8a6d3a" stroke-width="1" opacity="0.5"/>
+          <g stroke="#7a5c2e" stroke-width="1.6" fill="none" stroke-linecap="round">
+            <path d="M130,121 L130,95"/>
+            <path d="M130,114 Q123,110 118,113"/>
+            <path d="M130,114 Q137,110 142,113"/>
+            <path d="M130,105 Q123,101 118,104"/>
+            <path d="M130,105 Q137,101 142,104"/>
+            <path d="M130,97 Q126,94 122,96"/>
+            <path d="M130,97 Q134,94 138,96"/>
+          </g>
+        </g>
+      </svg>
+    </button>
+ 
+    <p class="hint-text" id="hintText">tap the envelope for the surprise...</p>
+  </section>
+ 
+  <!-- SCREEN 2 : MENU -->
+  <section class="screen" id="screen-menu">
+    <h2 class="marker-title">Gifts for you</h2>
+    <div class="menu-options">
+      <button class="menu-item" data-target="screen-messages">
+        <span class="menu-icon">💌</span>
+        <span class="menu-label">Message</span>
+      </button>
+      <button class="menu-item" data-target="screen-memories">
+        <span class="menu-icon">🧸</span>
+        <span class="menu-label">Memories</span>
+      </button>
+    </div>
+  </section>
+ 
+  <!-- SCREEN 3 : MESSAGES -->
+  <section class="screen" id="screen-messages">
+    <button class="back-btn" data-target="screen-menu" aria-label="Kembali">‹</button>
+ 
+    <div class="polaroid-stack">
+      <!-- GANTI FOTO DI SINI: taruh file foto1.jpg & foto2.jpg di folder yang sama
+           dengan file HTML ini (nama harus persis sama). Kalau file belum ada,
+           otomatis muncul ikon kamera sebagai placeholder. -->
+      <figure class="polaroid polaroid-1">
+        <div class="photo"><img src="foto1.jpg" alt="Foto kenangan 1" onerror="this.onerror=null;this.replaceWith(Object.assign(document.createElement('span'),{textContent:'📷'}));"></div>
+      </figure>
+      <figure class="polaroid polaroid-2">
+        <div class="photo"><img src="foto2.jpg" alt="Foto kenangan 2" onerror="this.onerror=null;this.replaceWith(Object.assign(document.createElement('span'),{textContent:'📷'}));"></div>
+      </figure>
+ 
+      <div class="balloon balloon-left-1">
+        <svg viewBox="0 0 100 160" xmlns="http://www.w3.org/2000/svg">
+          <path d="M50 20 C50 5,25 5,25 27 C25 45,50 65,50 78 C50 65,75 45,75 27 C75 5,50 5,50 20 Z" fill="#e8798a"/>
+          <path d="M50 80 Q45 100 50 118 Q55 136 50 152" stroke="#ffffff" stroke-width="1.4" fill="none" opacity="0.55"/>
+        </svg>
+      </div>
+      <div class="balloon balloon-left-2">
+        <svg viewBox="0 0 100 160" xmlns="http://www.w3.org/2000/svg">
+          <path d="M50 20 C50 5,25 5,25 27 C25 45,50 65,50 78 C50 65,75 45,75 27 C75 5,50 5,50 20 Z" fill="#f2a6b0"/>
+          <path d="M50 80 Q45 100 50 118 Q55 136 50 152" stroke="#ffffff" stroke-width="1.4" fill="none" opacity="0.55"/>
+        </svg>
+      </div>
+      <div class="balloon balloon-right-1">
+        <svg viewBox="0 0 100 160" xmlns="http://www.w3.org/2000/svg">
+          <path d="M50 20 C50 5,25 5,25 27 C25 45,50 65,50 78 C50 65,75 45,75 27 C75 5,50 5,50 20 Z" fill="#f0aab5"/>
+          <path d="M50 80 Q45 100 50 118 Q55 136 50 152" stroke="#ffffff" stroke-width="1.4" fill="none" opacity="0.55"/>
+        </svg>
+      </div>
+      <div class="balloon balloon-right-2">
+        <svg viewBox="0 0 100 160" xmlns="http://www.w3.org/2000/svg">
+          <path d="M50 20 C50 5,25 5,25 27 C25 45,50 65,50 78 C50 65,75 45,75 27 C75 5,50 5,50 20 Z" fill="#d95c6e"/>
+          <path d="M50 80 Q45 100 50 118 Q55 136 50 152" stroke="#ffffff" stroke-width="1.4" fill="none" opacity="0.55"/>
+        </svg>
+      </div>
+    </div>
+ 
+    <!-- GANTI PESAN DI SINI (isi ulang message-text sesuai kata-kata kamu sendiri) -->
+    <div class="message-card">
+      <div class="card-corner"></div>
+      <div class="card-stars"><span>★</span><span>★</span><span>★</span></div>
+      <div class="card-flowers">💐</div>
+      <button class="vinyl-btn" id="vinylBtn" aria-label="Putar lagu"><span>Click</span></button>
+ 
+      <p class="message-text">Happy 2nd Anniversary, Sayang! Nggak terasa kita sudah jalan dua tahun bareng-bareng. Terima kasih ya sudah bertahan, sabar, dan selalu ada buat aku dalam suka maupun duka. Semoga di tahun-tahun berikutnya, kita makin kompak, makin dewasa, dan hubungan kita makin kuat. I love you more than words can say.</p>
+      <p class="message-text">Selama dua tahun ini kita udah ngelewatin banyak banget cerita. Ada hari-hari yang bikin ketawa sampai lupa waktu, ada juga momen yang bikin kita capek, kesel, bahkan sempat beda pendapat. Tapi aku seneng banget karena sejauh ini kita selalu bisa balik lagi, ngobrol baik-baik, dan milih buat tetap bareng. Makasih ya udah jadi rumah yang selalu bikin aku ngerasa nyaman.</p>
+    </div>
+  </section>
+ 
+  <!-- SCREEN 4 : MEMORIES (video) -->
+  <section class="screen" id="screen-memories">
+    <button class="back-btn" data-target="screen-menu" aria-label="Kembali">‹</button>
+    <p class="script-title small" style="margin-bottom:20px;">Our Memory</p>
+ 
+    <div class="video-frame">
+      <!-- GANTI VIDEO DI SINI: taruh file video (mis. memory.mp4) di folder yang
+           sama dengan file HTML ini, lalu ganti "memory.mp4" di baris <source> bawah -->
+      <video controls playsinline preload="metadata">
+        <source src="vidio.MOV" type="video/mp4">
+        Browser kamu tidak mendukung pemutaran video.
+      </video>
+    </div>
+    <p class="hint-text" style="margin-top:18px; font-size:0.9rem;">Happy Anniversary! yang ke 2 tahun sayang!!!</p>
+  </section>
+ 
+</div>
+ 
+<script>
+  function goTo(id){
+    document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
+    document.getElementById(id).classList.add('active');
+  }
+ 
+  const envelopeBtn = document.getElementById('envelopeBtn');
+  const hintText = document.getElementById('hintText');
+  envelopeBtn.addEventListener('click', () => {
+    if (envelopeBtn.classList.contains('opened')) return;
+    envelopeBtn.classList.add('opened');
+    hintText.style.opacity = '0';
+    setTimeout(() => goTo('screen-menu'), 950);
+  });
+ 
+  document.querySelectorAll('[data-target]').forEach(btn => {
+    btn.addEventListener('click', () => goTo(btn.dataset.target));
+  });
+ 
+  const vinylBtn = document.getElementById('vinylBtn');
+  if (vinylBtn){
+    // GANTI LAGU DI SINI: taruh file lagu (mis. song.mp3) di folder yang sama
+    // dengan file HTML ini. Nama filenya harus persis "song.mp3", atau ganti
+    // nama file di baris di bawah ini sesuai nama filemu.
+    const song = new Audio('song.mp3');
+    song.loop = true;
+ 
+    vinylBtn.addEventListener('click', () => {
+      if (song.paused){
+        song.play().catch(() => {
+          console.warn('Taruh file "song.mp3" di folder yang sama dengan file HTML ini biar tombol Click bisa muter lagu.');
+        });
+        vinylBtn.classList.add('spinning');
+      } else {
+        song.pause();
+        vinylBtn.classList.remove('spinning');
+      }
+    });
+  }
+ 
+  // ambient floating hearts
+  (function(){
+    const container = document.getElementById('ambientHearts');
+    const count = 12;
+    for (let i = 0; i < count; i++){
+      const h = document.createElement('span');
+      h.className = 'amb-heart';
+      h.textContent = '♥';
+      h.style.left = Math.random() * 100 + '%';
+      h.style.fontSize = (10 + Math.random() * 14) + 'px';
+      h.style.animationDuration = (9 + Math.random() * 9) + 's';
+      h.style.animationDelay = (Math.random() * 10) + 's';
+      h.style.opacity = (0.08 + Math.random() * 0.14).toFixed(2);
+      container.appendChild(h);
+    }
+  })();
+</script>
+</body>
+</html>
+ 
